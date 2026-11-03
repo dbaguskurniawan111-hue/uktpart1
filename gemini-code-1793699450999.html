@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tryout Prediksi UKT JF PKN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Header -->
+    <header class="bg-indigo-700 text-white shadow-md p-4">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">Tryout Prediksi UKT JF PKN</h1>
+            <div id="timer-container" class="hidden bg-indigo-800 px-3 py-1 rounded-lg text-sm font-semibold">
+                Sisa Waktu: <span id="timer">90:00</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-3xl w-full mx-auto p-4 flex-grow my-6">
+        
+        <!-- Halaman Pilih Paket -->
+        <div id="welcome-screen" class="bg-white rounded-xl shadow-lg p-6 text-center">
+            <h2 class="text-2xl font-bold mb-4 text-indigo-700">Selamat Datang di Simulasi Ujian UKT JF PKN</h2>
+            <p class="text-slate-600 mb-6">Pilih paket soal latihan di bawah ini. Setiap paket terdiri dari 60 soal pilihan ganda dengan alokasi waktu pengerjaan 90 menit[cite: 1].</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <button onclick="startQuiz(1)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition">Mulai Paket 1</button>
+                <button onclick="startQuiz(2)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition">Mulai Paket 2</button>
+                <button onclick="startQuiz(3)" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-6 rounded-lg transition">Mulai Paket 3</button>
+            </div>
+        </div>
+
+        <!-- Halaman Ujian -->
+        <div id="quiz-screen" class="hidden bg-white rounded-xl shadow-lg p-6">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <span id="question-number" class="text-sm font-semibold text-slate-500">Soal ke-1 dari 60</span>
+                <span id="package-title" class="text-xs bg-indigo-100 text-indigo-800 px-2.5 py-1 rounded-full font-medium">Paket 1</span>
+            </div>
+            
+            <div id="question-text" class="text-lg font-medium mb-6">
+                <!-- Pertanyaan akan dimuat di sini -->
+            </div>
+
+            <div id="options-container" class="space-y-3 mb-6">
+                <!-- Pilihan jawaban akan dimuat di sini -->
+            </div>
+
+            <div class="flex justify-between items-center border-t pt-4">
+                <button id="prev-btn" onclick="prevQuestion()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-lg font-medium transition">Sebelumnya</button>
+                <button id="next-btn" onclick="nextQuestion()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition">Selanjutnya</button>
+            </div>
+        </div>
+
+        <!-- Halaman Hasil & Pembahasan -->
+        <div id="result-screen" class="hidden bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-2xl font-bold mb-2 text-center text-indigo-700">Hasil Ujian Anda</h2>
+            <div class="text-center mb-6">
+                <span id="final-score" class="text-5xl font-extrabold text-indigo-600">0</span>
+                <p class="text-slate-500 mt-1">Nilai Total (Skor benar x 1.67)</p>
+            </div>
+
+            <div class="mb-6 flex justify-center gap-4">
+                <button onclick="location.reload()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg font-medium transition">Kembali ke Menu Utama</button>
+            </div>
+
+            <h3 class="text-lg font-bold mb-4 border-b pb-2">Pembahasan & Kunci Jawaban</h3>
+            <div id="review-container" class="space-y-4 max-h-96 overflow-y-auto pr-2">
+                <!-- Daftar pembahasan dimuat di sini -->
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t py-4 text-center text-sm text-slate-500">
+        <p>&copy; 2026 Tryout UKT JF PKN. Siap Hadapi Ujian Kompetensi.</p>
+    </footer>
+
+    <!-- Script Data & Logika Aplikasi -->
+    <script>
+        // Database ringkas untuk contoh implementasi (Mendukung Paket 1, 2, dan 3 dari dokumen sumber)
+        const quizData = {
+            1: {
+                title: "Paket 1",
+                questions: [
+                    { q: "1. AR menganalisis pengalihan saham oleh WP kepada sebuah PT dan menghitung pajak terutang Rp2 miliar. WP hanya bersedia membayar Rp1 miliar. Tindakan yang paling tepat adalah ...", options: ["Menyesuaikan hasil analisis menjadi Rp1 miliar sesuai kesanggupan WP", "Menerima Rp1 miliar dan menutup kasus agar target tercapai", "Tetap menuangkan hasil analisis Rp2 miliar sesuai data; pembayaran Rp1 miliar diterima sebagai pemenuhan sebagian, sisanya ditindaklanjuti sesuai ketentuan (usul pemeriksaan bila tidak dipenuhi)", "Menyerahkan permasalahan kepada Kasi tanpa rekomendasi apa pun"], answer: 2, explanation: "Hasil analisis harus mencerminkan data, bukan target atau kesanggupan bayar. Bagian yang dibayar dicatat sebagai pemenuhan; sisa potensi yang tidak dipenuhi direkomendasikan usul pemeriksaan di LHP2DK." },
+                    { q: "2. PT Cahaya (Indonesia, non-bursa) dijual oleh pemegang sahamnya, Cahaya Holdings Ltd (SPLN tanpa SKD), seharga Rp10 miliar kepada PT Lokal. PPh Pasal 26 yang wajib dipotong PT Lokal adalah ...", options: ["Rp250 juta", "Rp500 juta", "Rp2 miliar", "Rp1 miliar"], answer: 1, explanation: "PPh 26 atas penjualan saham PT Indonesia oleh SPLN = 20% x perkiraan penghasilan neto 25% x harga jual = 5% x Rp10 M = Rp500 juta." },
+                    { q: "3. AR menerima data ILAP: Tuan B membeli tanah Rp3 miliar tahun lalu. Tindakan PERTAMA yang tepat adalah", options: ["Langsung meminta Tuan B membayar PPh final 2,5%", "Langsung usulkan pemeriksaan", "Langsung menerbitkan SP2DK atas Rp3 miliar sebagai penghasilan", "Meneliti data internal (SPT Tahunan, daftar harta, penghasilan yang dilaporkan) untuk menilai apakah pembelian itu wajar dengan penghasilan Tuan B"], answer: 3, explanation: "Alur pengawasan: validasi dan analisis data dulu (PnKM). SP2DK baru terbit bila ditemukan indikasi ketidakpatuhan dan estimasi potensi." }
+                    // Tambahkan soal berikutnya sesuai kebutuhan dokumen PDF
+                ]
+            },
+            2: {
+                title: "Paket 2",
+                questions: [
+                    { q: "1. Dalam pembahasan SP2DK, WP menawarkan 'ucapan terima kasih' jika AR tidak mempersoalkan data rekening luar negeri miliknya. Sikap AR yang tepat adalah", options: ["Menyerahkan kasus kepada WP untuk diselesaikan sendiri", "Menolak tawaran, tetap memproses data sesuai ketentuan, dan melaporkan upaya gratifikasi kepada atasan/unit kepatuhan internal", "Menghapus data rekening dari kertas kerja", "Menerima asal tidak tertulis"], answer: 1, explanation: "Integritas: gratifikasi ditolak dan dilaporkan; analisis tetap mengikuti data." },
+                    { q: "2. AR menerima data ILAP bahwa Nyonya H (karyawan) membeli rumah Rp5 miliar secara tunai, sedangkan SPT-nya hanya melaporkan gaji Rp300 juta setahun. Hal yang PALING tepat ditanyakan dalam SP2DK adalah", options: ["Nama notaris", "Jumlah anggota keluarga saja", "Sumber dana pembelian rumah tersebut", "Alasan memilih lokasi rumah"], answer: 2, explanation: "Ketidakwajaran harta dibanding penghasilan diuji dengan menelusuri sumber dana." }
+                ]
+            },
+            3: {
+                title: "Paket 3",
+                questions: [
+                    { q: "1. AR menghitung potensi Rp1,5 miliar atas WP. WP menyatakan akan mengajukan keberatan dan meminta AR 'menurunkan saja' angkanya. Sikap AR yang tepat adalah", options: ["Menurunkan potensi agar WP tidak keberatan", "Menunda kasus tanpa batas", "Tetap pada hasil analisis yang didukung data, menjelaskan dasar penghitungan, dan menginformasikan hak WP sesuai ketentuan", "Menghapus kasus dari DPP"], answer: 2, explanation: "Integritas dan kepastian hukum: angka mengikuti data. Hak WP dihormati melalui mekanisme yang tersedia." }
+                ]
+            }
+        };
+
+        let currentPackage = 1;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let timerInterval;
+        let timeLeft = 90 * 60; // 90 menit
+
+        function startQuiz(packageNum) {
+            currentPackage = packageNum;
+            currentQuestionIndex = 0;
+            userAnswers = new Array(quizData[packageNum].questions.length).fill(null);
+            
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            document.getElementById('timer-container').classList.remove('hidden');
+            document.getElementById('package-title').innerText = quizData[packageNum].title;
+
+            startTimer();
+            loadQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 90 * 60;
+            timerInterval = setInterval(() => {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                document.getElementById('timer').innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    alert("Waktu habis!");
+                    submitQuiz();
+                }
+                timeLeft--;
+            }, 1000);
+        }
+
+        function loadQuestion() {
+            const qData = quizData[currentPackage].questions[currentQuestionIndex];
+            document.getElementById('question-number').innerText = `Soal ke-${currentQuestionIndex + 1} dari ${quizData[currentPackage].questions.length}`;
+            document.getElementById('question-text').innerText = qData.q;
+
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            qData.options.forEach((option, index) => {
+                let isChecked = userAnswers[currentQuestionIndex] === index ? 'checked' : '';
+                optionsContainer.innerHTML += `
+                    <label class="flex items-start p-3 border rounded-lg hover:bg-slate-50 cursor-pointer transition">
+                        <input type="radio" name="option" value="${index}" ${isChecked} onclick="selectOption(${index})" class="mt-1 mr-3">
+                        <span class="text-slate-700">${option}</span>
+                    </label>
+                `;
+            });
+
+            document.getElementById('prev-btn').style.display = currentQuestionIndex === 0 ? 'none' : 'block';
+            const nextBtn = document.getElementById('next-btn');
+            if (currentQuestionIndex === quizData[currentPackage].questions.length - 1) {
+                nextBtn.innerText = "Selesai";
+                nextBtn.setAttribute("onclick", "submitQuiz()");
+            } else {
+                nextBtn.innerText = "Selanjutnya";
+                nextBtn.setAttribute("onclick", "nextQuestion()");
+            }
+        }
+
+        function selectOption(index) {
+            userAnswers[currentQuestionIndex] = index;
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < quizData[currentPackage].questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('timer-container').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+
+            let correctCount = 0;
+            const questions = quizData[currentPackage].questions;
+            
+            questions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            let score = Math.round((correctCount / questions.length) * 100);
+            document.getElementById('final-score').innerText = score;
+
+            // Render Review
+            const reviewContainer = document.getElementById('review-container');
+            reviewContainer.innerHTML = '';
+            questions.forEach((q, idx) => {
+                let userAns = userAnswers[idx] !== null ? q.options[userAnswers[idx]] : "Tidak dijawab";
+                let correctAns = q.options[q.answer];
+                let isCorrect = userAnswers[idx] === q.answer;
+
+                reviewContainer.innerHTML += `
+                    <div class="p-4 border rounded-lg ${isCorrect ? 'bg-emerald-50 border-emerald-200' : 'bg-rose-50 border-rose-200'}">
+                        <p class="font-semibold text-slate-800 mb-2">${q.q}</p>
+                        <p class="text-sm text-slate-600">Jawaban Anda: <span class="${isCorrect ? 'text-emerald-700 font-medium' : 'text-rose-700 font-medium'}">${userAns}</span></p>
+                        <p class="text-sm text-slate-600 mb-2">Kunci Jawaban: <span class="text-emerald-700 font-medium">${correctAns}</span></p>
+                        <div class="text-xs bg-white p-2 rounded border text-slate-700"><strong>Pembahasan:</strong> ${q.explanation}</div>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
